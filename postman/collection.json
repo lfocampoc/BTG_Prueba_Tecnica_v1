@@ -1,0 +1,373 @@
+{
+  "info": {
+    "name": "GTC Funds API",
+    "description": "API para gestion de fondos BTG Pactual",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://dnldsxlor4.execute-api.us-east-2.amazonaws.com/prod"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\",\n  \"phone\": \"+573112382671\",\n  \"password\": \"123456\",\n  \"notification_preference\": \"email\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@gtc.com\",\n  \"password\": \"admin123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Crear usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario@test.com\",\n  \"phone\": \"+573112382671\",\n  \"password\": \"123456\",\n  \"notification_preference\": \"email\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users"]
+            }
+          }
+        },
+        {
+          "name": "Get usuario",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fondos",
+      "item": [
+        {
+          "name": "Listar fondos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/funds",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "funds"]
+            }
+          }
+        },
+        {
+          "name": "Fondos activos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/funds/active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "funds", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get fondo",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/funds/FPV_BTG_PACTUAL_RECAUDADORA",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "funds", "FPV_BTG_PACTUAL_RECAUDADORA"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Suscripciones",
+      "item": [
+        {
+          "name": "Crear suscripcion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"fund_id\": \"FPV_BTG_PACTUAL_RECAUDADORA\",\n  \"amount\": 100000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions"]
+            }
+          }
+        },
+        {
+          "name": "Get suscripciones usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", "user", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Cancelar suscripcion",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/{{subscription_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", "{{subscription_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transacciones",
+      "item": [
+        {
+          "name": "Get transacciones usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/transactions/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "transactions", "user", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notificaciones",
+      "item": [
+        {
+          "name": "Get notificaciones usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "user", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tests",
+      "item": [
+        {
+          "name": "Sin token",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", "user", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tests de Admin",
+      "item": [
+        {
+          "name": "Admin - Ver Todas Suscripciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", "user", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Admin - Ver Todas Transacciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/transactions/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "transactions", "user", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Admin - Ver Todas Notificaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "user", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

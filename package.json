@@ -1,0 +1,31 @@
+{
+  "name": "btg-pactual-funds-api",
+  "version": "1.0.0",
+  "description": "API para gestión de fondos de inversión BTG Pactual",
+  "main": "lambda_handler.py",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "deploy:prod": "serverless deploy --stage prod",
+    "deploy:function": "serverless deploy function -f api --stage prod",
+    "remove": "serverless remove",
+    "remove:prod": "serverless remove --stage prod",
+    "logs": "serverless logs -f api --stage prod --tail",
+    "logs:prod": "serverless logs -f api --stage prod --tail",
+    "invoke": "serverless invoke -f api --stage prod",
+    "info": "serverless info --stage prod",
+    "doctor": "serverless doctor"
+  },
+  "devDependencies": {
+    "serverless": "^3.40.0",
+    "serverless-python-requirements": "^6.1.2"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "fastapi",
+    "dynamodb",
+    "serverless"
+  ],
+  "author": "BTG Pactual",
+  "license": "MIT"
+}

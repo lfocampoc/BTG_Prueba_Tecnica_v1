@@ -1,0 +1,199 @@
+service: btg-pactual-funds-api
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-2
+  stage: ${opt:stage, 'dev'}
+  environment:
+    DYNAMODB_TABLE_USERS: ${self:custom.dynamodb.users}
+    DYNAMODB_TABLE_FUNDS: ${self:custom.dynamodb.funds}
+    DYNAMODB_TABLE_SUBSCRIPTIONS: ${self:custom.dynamodb.subscriptions}
+    DYNAMODB_TABLE_TRANSACTIONS: ${self:custom.dynamodb.transactions}
+    DYNAMODB_TABLE_NOTIFICATIONS: ${self:custom.dynamodb.notifications}
+    JWT_SECRET_KEY: ${self:custom.jwt.secretKey}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.users}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.funds}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.subscriptions}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.transactions}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.notifications}
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    slim: false
+    strip: false
+    noDeps: false
+    fileName: requirements-lambda.txt
+    dockerImage: public.ecr.aws/sam/build-python3.11:latest
+  dynamodb:
+    users: gtc-users-${self:provider.stage}
+    funds: gtc-funds-${self:provider.stage}
+    subscriptions: gtc-subscriptions-${self:provider.stage}
+    transactions: gtc-transactions-${self:provider.stage}
+    notifications: gtc-notifications-${self:provider.stage}
+  jwt:
+    secretKey: btg-funds-secret-key-2025
+
+functions:
+  api:
+    handler: lambda_handler.lambda_handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+      - http:
+          path: /
+          method: ANY
+          cors: true
+
+resources:
+  Resources:
+    # DynamoDB Tables
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodb.users}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+
+    FundsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodb.funds}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: fund_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: fund_id
+            KeyType: HASH
+
+    SubscriptionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodb.subscriptions}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: subscription_id
+            AttributeType: S
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: subscription_id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: user_id-index
+            KeySchema:
+              - AttributeName: user_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    TransactionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodb.transactions}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: transaction_id
+            AttributeType: S
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: transaction_id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: user_id-index
+            KeySchema:
+              - AttributeName: user_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    NotificationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodb.notifications}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: notification_id
+            AttributeType: S
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: notification_id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: user_id-index
+            KeySchema:
+              - AttributeName: user_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+  Outputs:
+    ApiGatewayRestApiId:
+      Value:
+        Ref: ApiGatewayRestApi
+      Export:
+        Name: ${self:service}-${self:provider.stage}-ApiGatewayRestApiId
+
+    ApiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      Export:
+        Name: ${self:service}-${self:provider.stage}-ApiGatewayRestApiRootResourceId
+
+    ApiGatewayRestApiUrl:
+      Value:
+        Fn::Join:
+          - ''
+          - - https://
+            - Ref: ApiGatewayRestApi
+            - .execute-api.
+            - ${self:provider.region}
+            - .amazonaws.com/
+            - ${self:provider.stage}
+      Export:
+        Name: ${self:service}-${self:provider.stage}-ApiGatewayRestApiUrl
+
+plugins:
+  - serverless-python-requirements
+
+package:
+  exclude:
+    - tests/**
+    - terraform/**
+    - scripts/**
+    - docs/**
+    - "*.md"
+    - .git/**
+    - __pycache__/**
+    - "*.pyc"
+    - .pytest_cache/**
+    - htmlcov/**
+    - "*.tfstate*"
+    - .terraform/**
+    - test_*.py
+    - init_admin.py

@@ -1,0 +1,26 @@
+{
+    "id": "gtc-funds-env",
+    "name": "GTC Funds Environment",
+    "values": [
+      {
+        "key": "base_url",
+        "value": "https://dnldsxlor4.execute-api.us-east-2.amazonaws.com/prod",
+        "enabled": true
+      },
+      {
+        "key": "user_id",
+        "value": "",
+        "enabled": true
+      },
+      {
+        "key": "subscription_id",
+        "value": "",
+        "enabled": true
+      },
+      {
+        "key": "token",
+        "value": "",
+        "enabled": true
+      }
+    ]
+  }
