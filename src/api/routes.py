@@ -206,8 +206,8 @@ async def create_subscription(subscription_data: SubscriptionCreate, current_use
 
 @router.get("/subscriptions/user/{user_id}", response_model=List[SubscriptionResponse])
 async def get_user_subscriptions(user_id: str, current_user: dict = Depends(get_current_user)):
-    """Muestro todas las suscripciones del usuario"""
-    return subscription_service.get_user_subscriptions(user_id, current_user)
+    """Muestro solo las suscripciones activas del usuario"""
+    return subscription_service.get_active_user_subscriptions(user_id, current_user)
 
 @router.get("/subscriptions/user/{user_id}/active", response_model=List[SubscriptionResponse])
 async def get_active_user_subscriptions(user_id: str, current_user: dict = Depends(get_current_user)):
