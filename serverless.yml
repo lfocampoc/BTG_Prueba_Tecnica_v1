@@ -25,10 +25,15 @@ provider:
             - dynamodb:Scan
           Resource:
             - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.users}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.users}/index/*
             - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.funds}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.funds}/index/*
             - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.subscriptions}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.subscriptions}/index/*
             - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.transactions}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.transactions}/index/*
             - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.notifications}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamodb.notifications}/index/*
 
 custom:
   pythonRequirements:
