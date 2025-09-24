@@ -16,6 +16,14 @@
     {
       "key": "user_id",
       "value": ""
+    },
+    {
+      "key": "admin_token",
+      "value": ""
+    },
+    {
+      "key": "admin_user_id",
+      "value": ""
     }
   ],
   "item": [
@@ -45,6 +53,30 @@
         },
         {
           "name": "Login Cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    console.log('Respuesta completa:', response);",
+                  "    if (response.access_token) {",
+                  "        pm.collectionVariables.set('token', response.access_token);",
+                  "        pm.collectionVariables.set('user_id', response.user.user_id);",
+                  "        console.log('Token guardado:', response.access_token);",
+                  "        console.log('User ID guardado:', response.user.user_id);",
+                  "    } else {",
+                  "        console.log('No se encontró access_token en la respuesta');",
+                  "    }",
+                  "} else {",
+                  "    console.log('Error en login:', pm.response.text());",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -66,6 +98,30 @@
         },
         {
           "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    console.log('Respuesta admin completa:', response);",
+                  "    if (response.access_token) {",
+                  "        pm.collectionVariables.set('admin_token', response.access_token);",
+                  "        pm.collectionVariables.set('admin_user_id', response.user.user_id);",
+                  "        console.log('Admin Token guardado:', response.access_token);",
+                  "        console.log('Admin User ID guardado:', response.user.user_id);",
+                  "    } else {",
+                  "        console.log('No se encontró access_token en la respuesta admin');",
+                  "    }",
+                  "} else {",
+                  "    console.log('Error en login admin:', pm.response.text());",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -302,12 +358,56 @@
       "item": [
         {
           "name": "Sin token",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Limpiar tokens para probar sin autorización",
+                  "pm.collectionVariables.set('token', '');",
+                  "pm.collectionVariables.set('admin_token', '');",
+                  "console.log('Tokens limpiados para prueba sin autorización');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "url": {
               "raw": "{{base_url}}/api/v1/subscriptions/user/{{user_id}}",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "subscriptions", "user", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Limpiar Tokens",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Limpiar todos los tokens",
+                  "pm.collectionVariables.set('token', '');",
+                  "pm.collectionVariables.set('admin_token', '');",
+                  "pm.collectionVariables.set('user_id', '');",
+                  "pm.collectionVariables.set('admin_user_id', '');",
+                  "console.log('Todos los tokens han sido limpiados');",
+                  "pm.test('Tokens limpiados', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
             }
           }
         }

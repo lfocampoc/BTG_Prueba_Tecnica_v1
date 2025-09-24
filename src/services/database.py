@@ -73,15 +73,22 @@ class DynamoDBService:
         return response
     
     def query_items(self, table_name: str, key_condition_expression: str, 
-                   expression_values: Dict[str, Any]) -> List[Dict[str, Any]]:
+                   expression_values: Dict[str, Any], index_name: str = None) -> List[Dict[str, Any]]:
         """Consulto elementos con condición de clave"""
         table = self.tables[table_name]
         # Convierto floats a Decimal en los valores de expresión
         converted_values = self._convert_floats_to_decimal(expression_values)
-        response = table.query(
-            KeyConditionExpression=key_condition_expression,
-            ExpressionAttributeValues=converted_values
-        )
+        
+        query_kwargs = {
+            'KeyConditionExpression': key_condition_expression,
+            'ExpressionAttributeValues': converted_values
+        }
+        
+        # Si se especifica un índice, lo uso
+        if index_name:
+            query_kwargs['IndexName'] = index_name
+            
+        response = table.query(**query_kwargs)
         return response.get('Items', [])
     
     def scan_items(self, table_name: str, filter_expression: str = None, 

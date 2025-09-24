@@ -68,11 +68,12 @@ class SubscriptionService:
             # Admin ve todas las suscripciones
             subscriptions = db_service.scan_items(self.table_name)
         else:
-            # Cliente ve solo las suyas
+            # Cliente ve solo las suyas usando el índice user_id-index
             subscriptions = db_service.query_items(
                 self.table_name,
                 "user_id = :user_id",
-                {":user_id": user_id}
+                {":user_id": user_id},
+                index_name="user_id-index"
             )
         
         return [SubscriptionResponse(**sub) for sub in subscriptions]

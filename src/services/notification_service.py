@@ -47,11 +47,12 @@ class NotificationService:
             # Admin ve todas las notificaciones
             notifications = db_service.scan_items(self.table_name)
         else:
-            # Cliente ve solo las suyas
+            # Cliente ve solo las suyas usando el índice user_id-index
             notifications = db_service.query_items(
                 self.table_name,
                 "user_id = :user_id",
-                {":user_id": user_id}
+                {":user_id": user_id},
+                index_name="user_id-index"
             )
         
         # Ordenar por fecha de creación (más recientes primero)
@@ -67,6 +68,9 @@ class NotificationService:
             {
                 ":user_id": user_id,
                 ":type": notification_type
+            },
+            {
+                "#type": "type"
             }
         )
         
